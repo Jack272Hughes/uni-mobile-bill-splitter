@@ -30,6 +30,7 @@ static int const MaximumSize = 750;
   return NO;
 }
 
+// Solution for tranforming image found here https://stackoverflow.com/a/13545697
 UIImage * transformImage (UIImage * image) {
   CGColorSpaceRef dColorSpace = CGColorSpaceCreateDeviceRGB();
   size_t dBytesPerRow = image.size.width * 4;
