@@ -19,7 +19,6 @@ target 'MobileBillSplitter' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
   target 'MobileBillSplitterTests' do
     inherit! :complete
@@ -37,3 +36,5 @@ target 'MobileBillSplitter' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
+
+pod 'TesseractOCRiOS', :git => 'https://github.com/gali8/Tesseract-OCR-iOS.git', :branch => 'macos-support'

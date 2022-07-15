@@ -4,10 +4,10 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Button,
   Image
 } from "react-native";
 import { launchCamera, launchImageLibrary, ImageLibraryOptions, Asset, CameraOptions } from 'react-native-image-picker';
+import ReadImageModule from "./ReadImageModule";
 
 const styles = StyleSheet.create({
   container: {
@@ -46,11 +46,21 @@ const cameraOptions: CameraOptions = {
 
 export default function ImagePickerComponent() {
   const [resourcePath, setResourcePath] = useState<Asset>();
+  const [recognisedText, setRecognisedText] = useState<String[]>([]);
+
+  const processImage = (uri: string) => {
+    ReadImageModule.processImage(uri.replace("file://", "")).then(text => {
+      setRecognisedText(text || []);
+    }).catch(err => {
+      console.error(err);
+    })
+  }
 
   const selectFile = () => {
     launchImageLibrary(imageLibraryOptions).then(response => {
       if (response.assets) {
         setResourcePath(response.assets[0]);
+        processImage(response.assets[0].uri!);
       }
     });
   };
@@ -59,6 +69,7 @@ export default function ImagePickerComponent() {
     launchCamera(cameraOptions).then(response => {
       if (response.assets) {
         setResourcePath(response.assets[0]);
+        processImage(response.assets[0].uri!);
       }
     })
   }
@@ -66,13 +77,13 @@ export default function ImagePickerComponent() {
   return (
     <View style={styles.container}>
       <View style={styles.container}>
-        {resourcePath ? (
+        {resourcePath && recognisedText.length > 0 ? (
           <>
             <Image
               source={{ uri: resourcePath.uri }}
-              style={{ width: 200, height: 200 }}
+              style={{ width: 200, height: 400 }}
             />
-            <Text style={{ alignItems: "center" }}>{resourcePath.uri}</Text>
+            {recognisedText.map((item, index) => <Text key={`recognisedText${index}`}>{item}</Text>)}
           </>
         ) : (
           <></>

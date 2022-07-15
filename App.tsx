@@ -17,7 +17,6 @@ import {
   LearnMoreLinks,
   ReloadInstructions
 } from "react-native/Libraries/NewAppScreen";
-import ReadImageModule from "./ReadImageModule";
 import ImagePickerComponent from "./ImagePickerComponent";
 
 const Section: React.FC<{
@@ -57,14 +56,6 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter
   };
 
-  const onPress = () => {
-    ReadImageModule.processImage("My Event", "Home")
-      .then(result => {
-        console.log(result);
-      })
-      .catch(err => console.error(err));
-  };
-
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
@@ -79,13 +70,6 @@ const App = () => {
           }}
         >
           <ImagePickerComponent />
-          <Section title="Native Module">
-            <Button
-              title="Click to invoke your native module!"
-              color="#841584"
-              onPress={onPress}
-            />
-          </Section>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.

@@ -2,7 +2,7 @@ import { NativeModules } from "react-native";
 const{ ReadImageModule } = NativeModules;
 
 interface ReadImageInterface {
-    processImage(name: String, location: String): Promise<Number>
+    processImage(imageLocation: String): Promise<String[]>
 };
 
 export default ReadImageModule as ReadImageInterface;
