@@ -45,6 +45,7 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-MobileBillSplitter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MobileBillSplitter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MobileBillSplitter/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-MobileBillSplitter-MobileBillSplitterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileBillSplitter-MobileBillSplitterTests.release.xcconfig"; path = "Target Support Files/Pods-MobileBillSplitter-MobileBillSplitterTests/Pods-MobileBillSplitter-MobileBillSplitterTests.release.xcconfig"; sourceTree = "<group>"; };
+		9D5EDED2288AE3BF0038DA25 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
 		9DA242D42860D16600466ACC /* MBSReadImageModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBSReadImageModule.h; sourceTree = "<group>"; };
 		9DA242D52860D16600466ACC /* MBSReadImageModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBSReadImageModule.m; sourceTree = "<group>"; };
 		9DB8B7FD2860E03300347BAF /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tessdata; path = MobileBillSplitter/tessdata; sourceTree = "<group>"; };
@@ -121,6 +122,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				9D5EDECC288AE3BF0038DA25 /* Fonts */,
 				9DA242D42860D16600466ACC /* MBSReadImageModule.h */,
 				9DB8B7FD2860E03300347BAF /* tessdata */,
 				9DA242D52860D16600466ACC /* MBSReadImageModule.m */,
@@ -143,6 +145,15 @@
 				00E356EE1AD99517003FC87E /* MobileBillSplitterTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9D5EDECC288AE3BF0038DA25 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9D5EDED2288AE3BF0038DA25 /* MaterialCommunityIcons.ttf */,
+			);
+			name = Fonts;
+			path = "../node_modules/react-native-vector-icons/Fonts";
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {

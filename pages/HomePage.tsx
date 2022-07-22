@@ -10,7 +10,7 @@ import {
 	Text,
 	Title
 } from "react-native-paper";
-import { Screens } from "../App";
+import { Screens } from "../components/Navigation";
 import { TransactionInfo } from "../types";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,12 +22,12 @@ export default function HomePage() {
 		AsyncStorage.getItem("transactions")
 			// .then(result => setTransactions(JSON.parse(result || "[]")))
 			.then(() =>
-				setTransactions(
-					new Array(20).fill({
+				setTransactions([
+					{
 						name: "Holiday to United States of America",
 						date: "27/05/2021"
-					})
-				)
+					}
+				])
 			)
 			.catch(console.error);
 	}, []);
