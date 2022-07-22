@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./pages/HomePage";
 import TransactionPage from "./pages/TransactionPage";
 import PaymentPage from "./pages/PaymentPage";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,24 +25,25 @@ export default function App() {
 	};
 
 	return (
-		<NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen
-					name={screens.HOME}
-					component={HomePage}
-					options={{ title: "Bill Splitter" }}
-				/>
-				<Stack.Screen
-					name={screens.TRANSACTION}
-					options={{ title: "Transaction" }}
-					component={TransactionPage}
-				/>
-				<Stack.Screen
-					name={screens.PAYMENT}
-					options={{ title: "" }}
-					component={PaymentPage}
-				/>
-			</Stack.Navigator>
-		</NavigationContainer>
+		<SafeAreaProvider>
+			<NavigationContainer>
+				<Stack.Navigator
+					screenOptions={{
+						headerShown: false
+					}}
+				>
+					<Stack.Screen name={screens.HOME} component={HomePage} />
+					<Stack.Screen
+						name={screens.TRANSACTION}
+						options={{ animation: "slide_from_bottom" }}
+						component={TransactionPage}
+					/>
+					<Stack.Screen
+						name={screens.PAYMENT}
+						component={PaymentPage}
+					/>
+				</Stack.Navigator>
+			</NavigationContainer>
+		</SafeAreaProvider>
 	);
 }

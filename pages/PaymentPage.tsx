@@ -2,22 +2,14 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { screens } from "../App";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type PaymentPageProps = {
-	navigation: NavigationProp<any>;
-};
-
-export default function PaymentPage(props: PaymentPageProps) {
-	const navigate = (screen: string) => {
-		props.navigation.reset({
-			index: 0,
-			routes: [{ name: screen }]
-		});
-	};
+export default function PaymentPage() {
+	const navigation = useNavigation<NavigationProp<any>>();
 
 	return (
-		<View style={{ padding: 25 }}>
+		<SafeAreaView style={{ padding: 25 }}>
 			<Text>Payment Page</Text>
 			<View
 				style={{
@@ -26,16 +18,16 @@ export default function PaymentPage(props: PaymentPageProps) {
 					margin: 10
 				}}
 			>
-				<Button mode="contained" onPress={() => navigate(screens.HOME)}>
+				<Button mode="contained" onPress={() => navigation.goBack()}>
 					Home
 				</Button>
 				<Button
 					mode="contained"
-					onPress={() => navigate(screens.TRANSACTION)}
+					onPress={() => navigation.navigate(screens.TRANSACTION)}
 				>
 					Transaction
 				</Button>
 			</View>
-		</View>
+		</SafeAreaView>
 	);
 }

@@ -1,53 +1,64 @@
-import React from "react";
-import { Text, View } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
-import { Button } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ScrollView } from "react-native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+	Button,
+	Card,
+	Divider,
+	Paragraph,
+	Text,
+	Title
+} from "react-native-paper";
 import { screens } from "../App";
+import { Transaction } from "./types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type HomePageProps = {
-	navigation: NavigationProp<any>;
-};
+export default function HomePage() {
+	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const navigation = useNavigation<NavigationProp<any>>();
 
-export default function HomePage(props: HomePageProps) {
-	const navigate = (screen: string) => {
-		props.navigation.reset({
-			index: 0,
-			routes: [{ name: screen }]
-		});
-	};
+	useEffect(() => {
+		AsyncStorage.getItem("transactions")
+			// .then(result => setTransactions(JSON.parse(result || "[]")))
+			.then(() =>
+				setTransactions(
+					new Array(20).fill({
+						name: "Holiday to United States of America",
+						date: "27/05/2021"
+					})
+				)
+			)
+			.catch(console.error);
+	}, []);
 
 	return (
-		<View style={{ padding: 25 }}>
-			<Text>Update title</Text>
-			<Button
-				mode="contained"
-				uppercase={false}
-				onPress={() =>
-					props.navigation.setOptions({ title: "Changed!" })
-				}
-			>
-				Update title
+		<SafeAreaView style={{ padding: 25, marginBottom: 75 }}>
+			<Text style={{ fontSize: 32, textAlign: "center" }}>
+				Bill Splitter
+			</Text>
+			<Button mode="contained" style={{ margin: 20 }}>
+				New Transaction
 			</Button>
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-evenly",
-					margin: 10
-				}}
-			>
-				<Button
-					mode="contained"
-					onPress={() => navigate(screens.TRANSACTION)}
-				>
-					Transaction
-				</Button>
-				<Button
-					mode="contained"
-					onPress={() => navigate(screens.PAYMENT)}
-				>
-					Payment
-				</Button>
-			</View>
-		</View>
+			<ScrollView showsVerticalScrollIndicator={false}>
+				{transactions.map((transaction, index) => {
+					return (
+						<Card
+							key={index}
+							style={{ margin: 5 }}
+							onPress={() => {
+								navigation.navigate(screens.PAYMENT);
+							}}
+						>
+							<Card.Content>
+								<Paragraph>{transaction.date}</Paragraph>
+								<Divider />
+								<Title>{transaction.name}</Title>
+							</Card.Content>
+						</Card>
+					);
+				})}
+			</ScrollView>
+		</SafeAreaView>
 	);
 }
