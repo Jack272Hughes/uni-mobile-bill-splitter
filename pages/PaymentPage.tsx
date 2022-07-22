@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Button } from "react-native-paper";
-import { screens } from "../App";
+import { RootStackParamList, Screens } from "../App";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Transaction } from "../types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function PaymentPage() {
+type PaymentPageProps = NativeStackScreenProps<
+	RootStackParamList,
+	Screens.PAYMENT
+>;
+
+export default function PaymentPage(props: PaymentPageProps) {
 	const navigation = useNavigation<NavigationProp<any>>();
+	const [transaction, setTransaction] = useState<Transaction>();
+
+	useEffect(() => {
+		AsyncStorage.getItem(props.route.params.transactionName)
+			.then(result => setTransaction(JSON.parse(result || "{}")))
+			.catch(console.error);
+	}, []);
 
 	return (
 		<SafeAreaView style={{ padding: 25 }}>
@@ -23,7 +38,7 @@ export default function PaymentPage() {
 				</Button>
 				<Button
 					mode="contained"
-					onPress={() => navigation.navigate(screens.TRANSACTION)}
+					onPress={() => navigation.navigate(Screens.TRANSACTION)}
 				>
 					Transaction
 				</Button>

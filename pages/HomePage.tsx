@@ -10,12 +10,12 @@ import {
 	Text,
 	Title
 } from "react-native-paper";
-import { screens } from "../App";
-import { Transaction } from "./types";
+import { Screens } from "../App";
+import { TransactionInfo } from "../types";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomePage() {
-	const [transactions, setTransactions] = useState<Transaction[]>([]);
+	const [transactions, setTransactions] = useState<TransactionInfo[]>([]);
 	const navigation = useNavigation<NavigationProp<any>>();
 
 	useEffect(() => {
@@ -47,7 +47,9 @@ export default function HomePage() {
 							key={index}
 							style={{ margin: 5 }}
 							onPress={() => {
-								navigation.navigate(screens.PAYMENT);
+								navigation.navigate(Screens.PAYMENT, {
+									transactionName: transaction.name
+								});
 							}}
 						>
 							<Card.Content>

@@ -1,11 +1,17 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "react-native-paper";
-import { screens } from "../App";
+import { RootStackParamList, Screens } from "../App";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-export default function TransactionPage() {
+type TransactionPageProps = NativeStackScreenProps<
+	RootStackParamList,
+	Screens.TRANSACTION
+>;
+
+export default function TransactionPage(props: TransactionPageProps) {
 	const navigation = useNavigation<NavigationProp<any>>();
 
 	return (
@@ -20,7 +26,7 @@ export default function TransactionPage() {
 			>
 				<Button
 					mode="contained"
-					onPress={() => navigation.navigate(screens.PAYMENT)}
+					onPress={() => navigation.navigate(Screens.PAYMENT)}
 				>
 					Payment
 				</Button>

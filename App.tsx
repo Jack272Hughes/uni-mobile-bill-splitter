@@ -8,14 +8,21 @@ import HomePage from "./pages/HomePage";
 import TransactionPage from "./pages/TransactionPage";
 import PaymentPage from "./pages/PaymentPage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Transaction } from "./types";
 
-const Stack = createNativeStackNavigator();
+export enum Screens {
+	HOME = "home",
+	PAYMENT = "payment",
+	TRANSACTION = "transaction"
+}
 
-export const screens = {
-	HOME: "home",
-	TRANSACTION: "transaction",
-	PAYMENT: "payment"
+export type RootStackParamList = {
+	[Screens.HOME]: undefined;
+	[Screens.PAYMENT]: { transactionName: string };
+	[Screens.TRANSACTION]: { transaction: Transaction };
 };
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
 	const isDarkMode = useColorScheme() === "dark";
@@ -32,15 +39,15 @@ export default function App() {
 						headerShown: false
 					}}
 				>
-					<Stack.Screen name={screens.HOME} component={HomePage} />
+					<Stack.Screen name={Screens.HOME} component={HomePage} />
 					<Stack.Screen
-						name={screens.TRANSACTION}
-						options={{ animation: "slide_from_bottom" }}
-						component={TransactionPage}
+						name={Screens.PAYMENT}
+						component={PaymentPage}
 					/>
 					<Stack.Screen
-						name={screens.PAYMENT}
-						component={PaymentPage}
+						name={Screens.TRANSACTION}
+						options={{ animation: "slide_from_bottom" }}
+						component={TransactionPage}
 					/>
 				</Stack.Navigator>
 			</NavigationContainer>
