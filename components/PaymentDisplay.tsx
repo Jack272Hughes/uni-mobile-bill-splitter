@@ -70,21 +70,6 @@ export default function PaymentDisplay(props: DisplayProps) {
 
 								{selectedPerson === name && totalPayment > 0 && (
 									<DataTable>
-										<DataTable.Header
-											style={{ marginHorizontal: 20 }}
-										>
-											<DataTable.Title
-												textStyle={{ fontSize: 14 }}
-											>
-												Item
-											</DataTable.Title>
-											<DataTable.Title
-												textStyle={{ fontSize: 14 }}
-											>
-												Paid
-											</DataTable.Title>
-										</DataTable.Header>
-
 										{props.collectedPayments.payments
 											.get(name)
 											?.map((itemPayment, itemIndex) => {

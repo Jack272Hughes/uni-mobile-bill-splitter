@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import {
-	Button,
-	DataTable,
-	Divider,
-	IconButton,
-	Surface,
-	Text
-} from "react-native-paper";
+import { Divider, IconButton, Text } from "react-native-paper";
 import { RootStackParamList, Screens } from "../components/Navigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";

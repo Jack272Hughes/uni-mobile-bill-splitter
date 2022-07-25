@@ -6,6 +6,7 @@ type PersonProps = {
 	person: ColourCodedPerson;
 	isSelected?: boolean;
 	onPress?: () => void;
+	onLongPress?: () => void
 	gap?: number;
 };
 
@@ -16,6 +17,7 @@ export default function PersonIcon(props: PersonProps) {
 			mode="contained"
 			color={props.person.getHexColour()}
 			onPress={props.onPress}
+			onLongPress={props.onLongPress}
 		>
 			{props.isSelected
 				? props.person.getName()
