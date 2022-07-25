@@ -18,6 +18,15 @@ export default function ItemDisplay({
 	onPress,
 	onLongPress
 }: ItemProps) {
+	const payees = new Set<string>();
+	computedItem
+		.getItem()
+		.payments.forEach(payment =>
+			payment.people.forEach(person => payees.add(person))
+		);
+
+	payees.delete("");
+
 	return (
 		<View style={{ marginVertical: 5, marginHorizontal: 20 }}>
 			<Card
@@ -49,7 +58,7 @@ export default function ItemDisplay({
 					</Text>
 					<RemainderDisplay
 						total={computedItem.getPrice() / 100}
-						remainder={computedItem.getRemainder()}
+						remainder={computedItem.getRemainder() / 100}
 						prepend="£"
 					/>
 				</View>
@@ -63,13 +72,12 @@ export default function ItemDisplay({
 						top: -9
 					}}
 				>
-					{computedItem.getItem().payments.map((payment, index) => {
+					{Array.from(payees).map((payee, index) => {
 						const backgroundColor = people
-							.find(person => person.getName() === payment.person)
+							.find(person => person.getName() === payee)
 							?.getHexColour();
 
-						if (!backgroundColor) return <></>;
-						else
+						if (backgroundColor)
 							return (
 								<Badge
 									key={index}
@@ -83,6 +91,7 @@ export default function ItemDisplay({
 									{" "}
 								</Badge>
 							);
+						else return <></>;
 					})}
 				</View>
 			)}

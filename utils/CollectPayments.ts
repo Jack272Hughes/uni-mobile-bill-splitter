@@ -1,49 +1,41 @@
 import {
 	CollectedPayments,
+	Item,
 	ItemPayment,
-	PaymentPercentage,
-	RoundedPayments,
+	Payment,
 	Transaction
 } from "../types";
-import SortedPayments from "./SortedPayments";
 
-export function roundPayments(
-	total: number,
-	payments: PaymentPercentage[]
-): RoundedPayments {
-	const sortedPayments = new SortedPayments();
-	let remainder = total;
-	let totalPercentage = 0;
+function splitPayment(amount: number, people: string[]): Payment[] {
+	const perPerson = Math.floor(amount / people.length);
+	const remainder = amount - perPerson * people.length;
 
-	payments.forEach(payment => {
-		const amount = (payment.percentage * total) / 100;
-		const normalisedAmount = Math.floor(amount);
+	return people.map((person, index) => {
+		const payment: Payment = { person, amount: perPerson };
+		if (index < remainder) payment.amount++;
+		return payment;
+	});
+}
 
-		sortedPayments.add({
-			person: payment.person,
-			amount
-		});
-		totalPercentage += payment.percentage;
-		remainder -= normalisedAmount;
+function calculateItemPayments(item: Item): Map<string, number> {
+	let payments: Payment[] = [];
+	item.payments.forEach(paymentQuantity => {
+		const total = item.price * paymentQuantity.quantity;
+		if (paymentQuantity.people.length === 1) {
+			payments.push({ person: paymentQuantity.people[0], amount: total });
+		} else {
+			payments = payments.concat(
+				splitPayment(total, paymentQuantity.people)
+			);
+		}
 	});
 
-	if (totalPercentage > 99.99 && remainder > 0) {
-		for (let index = 0; index < remainder; index++) {
-			sortedPayments.get(index).amount++;
-		}
-		remainder = 0;
-	}
-
-	return {
-		remainder,
-		remainingPercentage: 100 - totalPercentage,
-		payments: sortedPayments.getAll().map(payment => {
-			return {
-				person: payment.person,
-				amount: Math.floor(payment.amount)
-			};
-		})
-	};
+	return payments.reduce((acc, payment) => {
+		if (acc.has(payment.person))
+			acc.set(payment.person, acc.get(payment.person) + payment.amount);
+		else acc.set(payment.person, payment.amount);
+		return acc;
+	}, new Map());
 }
 
 export default function collectPayments(
@@ -62,14 +54,13 @@ export default function collectPayments(
 	transaction.items.forEach(item => {
 		const totalPrice = item.price * item.quantity;
 		collectedPayments.total += totalPrice;
+		collectedPayments.remainder +=
+			item.price * (item.quantity - item.payments.length);
 
-		const roundedPayments = roundPayments(totalPrice, item.payments);
-		collectedPayments.remainder += roundedPayments.remainder;
+		const itemPayments = calculateItemPayments(item);
 
-		roundedPayments.payments.forEach(payment => {
-			payments
-				.get(payment.person)
-				?.push({ item: item.name, amount: payment.amount });
+		Array.from(itemPayments.entries()).forEach(([person, amount]) => {
+			payments.get(person)?.push({ item: item.name, amount: amount });
 		});
 	});
 

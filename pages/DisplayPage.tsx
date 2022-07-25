@@ -21,16 +21,20 @@ const EMPTY_TRANSACTION: Transaction = createBlankTransaction();
 
 const fakeItem: Item = {
 	name: "Coca-cola",
-	quantity: 3,
+	quantity: 4,
 	price: 299,
 	payments: [
 		{
-			person: "Jack Hughes",
-			percentage: 33.33
+			people: ["Jack Hughes"],
+			quantity: 1
 		},
 		{
-			person: "Maria Sherbert",
-			percentage: 33.33
+			people: ["Maria Sherbert"],
+			quantity: 1
+		},
+		{
+			people: ["Jack Hughes", "Jayden-Lee West"],
+			quantity: 1
 		}
 	]
 };

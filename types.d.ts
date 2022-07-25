@@ -13,16 +13,16 @@ export type ItemPayment = {
 	amount: number;
 };
 
-export type PaymentPercentage = {
-	person: string;
-	percentage: number;
+export type PaymentQuantity = {
+	people: string[];
+	quantity: number;
 };
 
 export type Item = {
 	name: string;
 	quantity: number;
 	price: number;
-	payments: PaymentPercentage[];
+	payments: PaymentQuantity[];
 };
 
 export type Transaction = {
@@ -33,7 +33,6 @@ export type Transaction = {
 export type RoundedPayments = {
 	payments: Payment[];
 	remainder: number;
-	remainingPercentage: number;
 };
 
 export type CollectedPayments = {

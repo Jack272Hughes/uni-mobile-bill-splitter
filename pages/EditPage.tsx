@@ -10,12 +10,7 @@ import { Item, Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColourCodedPerson } from "../utils/ColourCodedPerson";
 import PersonIcon from "../components/PersonIcon";
-import {
-	ItemModal,
-	ModalType,
-	PayeeModal,
-	PaymentModal
-} from "../components/modals";
+import { ItemModal, ModalType, PayeeModal } from "../components/modals";
 import ItemDisplay from "../components/ItemDisplay";
 import { ItemModalData } from "../components/modals/ItemModal";
 import ComputedItem from "../utils/ComputedItem";
@@ -46,16 +41,20 @@ export function createBlankTransaction(): Transaction {
 
 const fakeItem: Item = {
 	name: "Coca-cola",
-	quantity: 3,
+	quantity: 4,
 	price: 299,
 	payments: [
 		{
-			person: "Jack Hughes",
-			percentage: 33.33
+			people: ["Jack Hughes"],
+			quantity: 1
 		},
 		{
-			person: "Maria Sherbert",
-			percentage: 33.33
+			people: ["Maria Sherbert"],
+			quantity: 1
+		},
+		{
+			people: ["Jack Hughes", "Jayden-Lee West"],
+			quantity: 1
 		}
 	]
 };
@@ -69,7 +68,9 @@ export default function EditPage(props: TransactionPageProps) {
 	const { transactionName } = props.route.params;
 	const navigation = useNavigation<NavigationProp<any>>();
 
-	const [selectedPerson, setSelectedPerson] = useState("");
+	const [selectedPeople, setSelectedPeople] = useState<Set<string>>(
+		new Set()
+	);
 	const [transaction, setTransaction] = useState(createBlankTransaction());
 	const [currentModal, setCurrentModal] = useState<ModalInfo>(NO_MODAL);
 
@@ -91,8 +92,13 @@ export default function EditPage(props: TransactionPageProps) {
 	);
 
 	const selectPerson = (name: string): void => {
-		if (selectedPerson === name) setSelectedPerson("");
-		else setSelectedPerson(name);
+		const newSelectedPeople = new Set(selectedPeople);
+		if (newSelectedPeople.has(name)) {
+			newSelectedPeople.delete(name);
+		} else {
+			newSelectedPeople.add(name);
+		}
+		setSelectedPeople(newSelectedPeople);
 	};
 
 	const addPerson = (name: string): void => {
@@ -102,24 +108,37 @@ export default function EditPage(props: TransactionPageProps) {
 		if (currentModal.dataName) {
 			// No changes needed if the name hasn't changed
 			if (name === currentModal.dataName) return closeModal();
+
 			const existingPersonIndex = people.findIndex(
 				person => person === currentModal.dataName
 			);
-			people[existingPersonIndex] = name;
+			// If new name already exists, old name just needs to be deleted
+			if (people.includes(name)) people.splice(existingPersonIndex, 1);
+			else people[existingPersonIndex] = name;
 			// Update selected person if necessary
-			if (selectedPerson === currentModal.dataName) selectPerson(name);
+			if (selectedPeople.has(currentModal.dataName)) {
+				selectedPeople.delete(currentModal.dataName);
+				selectedPeople.add(name);
+			}
 			// Update every item payment for this person
 			items = items.map(item => {
 				return {
 					...item,
 					payments: item.payments.map(payment => {
-						return payment.person === currentModal.dataName
-							? { ...payment, person: name }
-							: payment;
+						const peopleIndex = payment.people.findIndex(
+							person => person === currentModal.dataName
+						);
+						if (peopleIndex > -1) {
+							const newPeople = payment.people.slice();
+							newPeople[peopleIndex] = name;
+							return { ...payment, people: newPeople };
+						} else {
+							return payment;
+						}
 					})
 				};
 			});
-		} else {
+		} else if (!people.includes(name)) {
 			people.push(name);
 		}
 
@@ -174,21 +193,6 @@ export default function EditPage(props: TransactionPageProps) {
 						)}
 					/>
 				);
-			case ModalType.PAYMENT:
-				return (
-					<PaymentModal
-						visible
-						onSubmit={data => {}}
-						onCancel={closeModal}
-						people={people}
-						item={
-							transaction.items.find(
-								item => item.name === currentModal.dataName
-							)!
-						}
-					/>
-				);
-
 			default:
 				return <></>;
 		}
@@ -260,7 +264,9 @@ export default function EditPage(props: TransactionPageProps) {
 							<PersonIcon
 								key={index}
 								person={person}
-								isSelected={selectedPerson === person.getName()}
+								isSelected={selectedPeople.has(
+									person.getName()
+								)}
 								onPress={() => selectPerson(person.getName())}
 								onLongPress={() =>
 									setCurrentModal({
@@ -297,15 +303,9 @@ export default function EditPage(props: TransactionPageProps) {
 				return (
 					<ItemDisplay
 						key={index}
-						onLongPress={() =>
-							setCurrentModal({
-								type: ModalType.ITEM,
-								dataName: computedItem.getItem().name
-							})
-						}
 						onPress={() =>
 							setCurrentModal({
-								type: ModalType.PAYMENT,
+								type: ModalType.ITEM,
 								dataName: computedItem.getItem().name
 							})
 						}

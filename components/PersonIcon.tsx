@@ -6,7 +6,7 @@ type PersonProps = {
 	person: ColourCodedPerson;
 	isSelected?: boolean;
 	onPress?: () => void;
-	onLongPress?: () => void
+	onLongPress?: () => void;
 	gap?: number;
 };
 
