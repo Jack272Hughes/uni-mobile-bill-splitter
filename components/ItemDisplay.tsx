@@ -8,6 +8,7 @@ type ItemProps = {
 	item: Item;
 	people: ColourCodedPerson[];
 	onPress?: () => void;
+	onLongPress?: () => void;
 };
 
 const priceStyleWithRemainder: TextStyle = {
@@ -22,7 +23,12 @@ const normalPriceStyle: TextStyle = {
 	color: DefaultTheme.colors.text
 };
 
-export default function ItemDisplay({ item, people, onPress }: ItemProps) {
+export default function ItemDisplay({
+	item,
+	people,
+	onPress,
+	onLongPress
+}: ItemProps) {
 	const totalPrice = (item.price * item.quantity) / 100;
 	const totalPercentage =
 		item.payments.reduce((acc, payment) => (acc += payment.percentage), 0) /
@@ -37,6 +43,7 @@ export default function ItemDisplay({ item, people, onPress }: ItemProps) {
 					borderRadius: 10
 				}}
 				onPress={onPress}
+				onLongPress={onLongPress}
 			>
 				<Badge
 					style={{

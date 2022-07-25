@@ -26,27 +26,12 @@ type ModalProps = {
 
 export default function ItemModal(props: ModalProps) {
 	const { item } = props;
-	const [name, setName] = useState("");
-	const [quantity, setQuantity] = useState("");
-	const [price, setPrice] = useState("");
+	const [name, setName] = useState(item?.name || "");
+	const [quantity, setQuantity] = useState(item?.quantity.toString() || "");
+	const [price, setPrice] = useState(
+		item ? (item.price / 100).toString() : ""
+	);
 	const [shouldShowWarnings, setShouldShowWarnings] = useState(false);
-
-	useEffect(() => {
-		if (item) {
-			setName(item.name);
-			setQuantity(item.quantity.toString());
-			setPrice((item.price / 100).toString());
-		} else {
-			resetValues();
-		}
-	}, [props.item]);
-
-	const resetValues = () => {
-		setName("");
-		setQuantity("");
-		setPrice("");
-		setShouldShowWarnings(false);
-	};
 
 	const isValidQuantity = quantity.length > 0 && /^\d+$/.test(quantity);
 	const isValidPrice = price.length > 0 && /^\d+(\.\d{1,2})?$/.test(price);
@@ -58,7 +43,6 @@ export default function ItemModal(props: ModalProps) {
 				quantity: Number.parseInt(quantity),
 				price: Math.floor(Number.parseFloat(price) * 100)
 			});
-			resetValues();
 		} else {
 			setShouldShowWarnings(true);
 		}

@@ -7,23 +7,31 @@ import {
 	Text,
 	TextInput
 } from "react-native-paper";
+import { Item, PaymentPercentage } from "../../types";
+import { ColourCodedPerson } from "../../utils/StringToColourHex";
 
-type PayeeModalData = {
-	name: string;
+export type PaymentModalData = {
+	payments: PaymentPercentage[];
 };
 
 type ModalProps = {
-	payee?: string;
+	item: Item;
+	people: ColourCodedPerson[];
 	visible: boolean;
-	onSubmit: (data: PayeeModalData) => void;
+	onSubmit: (data: PaymentModalData) => void;
 	onCancel: () => void;
 };
 
-export default function PayeeModal(props: ModalProps) {
-	const [name, setName] = useState(props.payee || "");
+export default function PaymentModal(props: ModalProps) {
+	const [selectedName, setSelectedName] = useState("");
+	const [percentage, setPercentage] = useState("");
+	const [payments, setPayments] = useState<PaymentPercentage[]>(
+		props.item.payments.slice()
+	);
+	const [useQuantity, setUseQuantity] = useState(true);
 
 	const onSubmit = () => {
-		props.onSubmit({ name });
+		props.onSubmit({ payments });
 	};
 
 	return (
@@ -50,7 +58,7 @@ export default function PayeeModal(props: ModalProps) {
 						textAlign: "center"
 					}}
 				>
-					{props.payee ? "Edit" : "Add"} Payee
+					Manage Payments
 				</Text>
 				<TextInput
 					mode="outlined"

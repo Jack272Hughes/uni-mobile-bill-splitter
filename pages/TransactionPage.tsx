@@ -10,7 +10,12 @@ import { Item, Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColourCodedPerson } from "../utils/StringToColourHex";
 import PersonIcon from "../components/PersonIcon";
-import { ItemModal, ModalType, PayeeModal } from "../components/modals";
+import {
+	ItemModal,
+	ModalType,
+	PayeeModal,
+	PaymentModal
+} from "../components/modals";
 import ItemDisplay from "../components/ItemDisplay";
 import { ItemModalData } from "../components/modals/ItemModal";
 
@@ -142,22 +147,49 @@ export default function TransactionPage(props: TransactionPageProps) {
 		closeModal();
 	};
 
+	const createModal = () => {
+		switch (currentModal.type) {
+			case ModalType.PAYEE:
+				return (
+					<PayeeModal
+						visible
+						onSubmit={data => addPerson(data.name)}
+						onCancel={closeModal}
+						payee={currentModal.dataName}
+					/>
+				);
+			case ModalType.ITEM:
+				return (
+					<ItemModal
+						visible
+						onSubmit={addItem}
+						onCancel={closeModal}
+						item={transaction.items.find(
+							item => item.name === currentModal.dataName
+						)}
+					/>
+				);
+			case ModalType.PAYMENT:
+				<PaymentModal
+					visible
+					onSubmit={data => {}}
+					onCancel={closeModal}
+					people={people}
+					item={
+						transaction.items.find(
+							item => item.name === currentModal.dataName
+						)!
+					}
+				/>;
+
+			default:
+				return <></>;
+		}
+	};
+
 	return (
 		<SafeAreaView style={{ padding: 5 }}>
-			<PayeeModal
-				visible={currentModal.type === ModalType.PAYEE}
-				onSubmit={data => addPerson(data.name)}
-				onCancel={closeModal}
-				payee={currentModal.dataName}
-			/>
-			<ItemModal
-				visible={currentModal.type === ModalType.ITEM}
-				onSubmit={addItem}
-				onCancel={closeModal}
-				item={transaction.items.find(
-					item => item.name === currentModal.dataName
-				)}
-			/>
+			{createModal()}
 			<View
 				style={{
 					flexDirection: "row",
@@ -258,9 +290,15 @@ export default function TransactionPage(props: TransactionPageProps) {
 				return (
 					<ItemDisplay
 						key={index}
-						onPress={() =>
+						onLongPress={() =>
 							setCurrentModal({
 								type: ModalType.ITEM,
+								dataName: item.name
+							})
+						}
+						onPress={() =>
+							setCurrentModal({
+								type: ModalType.PAYMENT,
 								dataName: item.name
 							})
 						}
