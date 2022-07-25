@@ -8,6 +8,7 @@ type BubbleProps = {
 	prepend?: string;
 	append?: string;
 	style?: ViewStyle;
+	size?: number;
 };
 
 export default function NumberBubble(props: BubbleProps) {
@@ -24,9 +25,11 @@ export default function NumberBubble(props: BubbleProps) {
 			}}
 		>
 			{props.header && (
-				<Text style={{ fontSize: 20 }}>{props.header}</Text>
+				<Text style={{ fontSize: props.size ? props.size * 1.25 : 20 }}>
+					{props.header}
+				</Text>
 			)}
-			<Text style={{ fontSize: 16 }}>
+			<Text style={{ fontSize: props.size || 16 }}>
 				{props.prepend}
 				{props.children}
 				{props.append}

@@ -33,6 +33,7 @@ export type Transaction = {
 export type RoundedPayments = {
 	payments: Payment[];
 	remainder: number;
+	remainingPercentage: number;
 };
 
 export type CollectedPayments = {

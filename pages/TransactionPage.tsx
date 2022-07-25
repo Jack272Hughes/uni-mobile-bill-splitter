@@ -8,7 +8,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Item, Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ColourCodedPerson } from "../utils/StringToColourHex";
+import { ColourCodedPerson } from "../utils/ColourCodedPerson";
 import PersonIcon from "../components/PersonIcon";
 import {
 	ItemModal,
@@ -18,6 +18,7 @@ import {
 } from "../components/modals";
 import ItemDisplay from "../components/ItemDisplay";
 import { ItemModalData } from "../components/modals/ItemModal";
+import ComputedItem from "../utils/ComputedItem";
 
 type TransactionPageProps = NativeStackScreenProps<
 	RootStackParamList,
@@ -54,7 +55,7 @@ const fakeItem: Item = {
 		},
 		{
 			person: "Maria Sherbert",
-			percentage: 66.67
+			percentage: 33.33
 		}
 	]
 };
@@ -83,6 +84,10 @@ export default function TransactionPage(props: TransactionPageProps) {
 
 	const people: ColourCodedPerson[] = transaction.people.map(
 		person => new ColourCodedPerson(person)
+	);
+
+	const items: ComputedItem[] = transaction.items.map(
+		item => new ComputedItem(item)
 	);
 
 	const selectPerson = (name: string): void => {
@@ -170,17 +175,19 @@ export default function TransactionPage(props: TransactionPageProps) {
 					/>
 				);
 			case ModalType.PAYMENT:
-				<PaymentModal
-					visible
-					onSubmit={data => {}}
-					onCancel={closeModal}
-					people={people}
-					item={
-						transaction.items.find(
-							item => item.name === currentModal.dataName
-						)!
-					}
-				/>;
+				return (
+					<PaymentModal
+						visible
+						onSubmit={data => {}}
+						onCancel={closeModal}
+						people={people}
+						item={
+							transaction.items.find(
+								item => item.name === currentModal.dataName
+							)!
+						}
+					/>
+				);
 
 			default:
 				return <></>;
@@ -286,24 +293,24 @@ export default function TransactionPage(props: TransactionPageProps) {
 			>
 				Add Item
 			</Button>
-			{transaction.items.map((item, index) => {
+			{items.map((computedItem, index) => {
 				return (
 					<ItemDisplay
 						key={index}
 						onLongPress={() =>
 							setCurrentModal({
 								type: ModalType.ITEM,
-								dataName: item.name
+								dataName: computedItem.getItem().name
 							})
 						}
 						onPress={() =>
 							setCurrentModal({
 								type: ModalType.PAYMENT,
-								dataName: item.name
+								dataName: computedItem.getItem().name
 							})
 						}
 						people={people}
-						item={item}
+						computedItem={computedItem}
 					/>
 				);
 			})}

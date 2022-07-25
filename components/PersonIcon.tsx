@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "react-native-paper";
-import { ColourCodedPerson } from "../utils/StringToColourHex";
+import { ColourCodedPerson } from "../utils/ColourCodedPerson";
 
 type PersonProps = {
 	person: ColourCodedPerson;

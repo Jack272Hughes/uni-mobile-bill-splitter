@@ -1,6 +1,7 @@
 import ItemModal from "./ItemModal";
 import PayeeModal from "./PayeeModal";
 import PaymentModal from "./PaymentModal";
+import PickerModal from "./PickerModal";
 
 enum ModalType {
 	NONE = "none",
@@ -10,4 +11,4 @@ enum ModalType {
 	TRANSACTION = "transaction"
 }
 
-export { ModalType, ItemModal, PayeeModal, PaymentModal };
+export { ItemModal, ModalType, PayeeModal, PaymentModal, PickerModal };

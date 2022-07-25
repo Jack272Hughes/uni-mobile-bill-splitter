@@ -30,7 +30,7 @@ const fakeItem: Item = {
 		},
 		{
 			person: "Maria Sherbert",
-			percentage: 66.67
+			percentage: 33.33
 		}
 	]
 };

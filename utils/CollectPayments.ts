@@ -7,7 +7,7 @@ import {
 } from "../types";
 import SortedPayments from "./SortedPayments";
 
-function roundPayments(
+export function roundPayments(
 	total: number,
 	payments: PaymentPercentage[]
 ): RoundedPayments {
@@ -19,7 +19,10 @@ function roundPayments(
 		const amount = (payment.percentage * total) / 100;
 		const normalisedAmount = Math.floor(amount);
 
-		sortedPayments.add({ person: payment.person, amount });
+		sortedPayments.add({
+			person: payment.person,
+			amount
+		});
 		totalPercentage += payment.percentage;
 		remainder -= normalisedAmount;
 	});
@@ -33,6 +36,7 @@ function roundPayments(
 
 	return {
 		remainder,
+		remainingPercentage: 100 - totalPercentage,
 		payments: sortedPayments.getAll().map(payment => {
 			return {
 				person: payment.person,

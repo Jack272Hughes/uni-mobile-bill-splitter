@@ -1,40 +1,23 @@
 import React from "react";
-import { TextStyle, View, ViewStyle } from "react-native";
-import { Badge, Card, DefaultTheme, Surface, Text } from "react-native-paper";
-import { Item } from "../types";
-import { ColourCodedPerson } from "../utils/StringToColourHex";
+import { View } from "react-native";
+import { Badge, Card, DefaultTheme, Text } from "react-native-paper";
+import { ColourCodedPerson } from "../utils/ColourCodedPerson";
+import ComputedItem from "../utils/ComputedItem";
+import RemainderDisplay from "./RemainderDisplay";
 
 type ItemProps = {
-	item: Item;
+	computedItem: ComputedItem;
 	people: ColourCodedPerson[];
 	onPress?: () => void;
 	onLongPress?: () => void;
 };
 
-const priceStyleWithRemainder: TextStyle = {
-	fontSize: 16,
-	textDecorationLine: "line-through",
-	color: DefaultTheme.colors.backdrop
-};
-
-const normalPriceStyle: TextStyle = {
-	fontSize: 24,
-	textDecorationLine: "none",
-	color: DefaultTheme.colors.text
-};
-
 export default function ItemDisplay({
-	item,
+	computedItem,
 	people,
 	onPress,
 	onLongPress
 }: ItemProps) {
-	const totalPrice = (item.price * item.quantity) / 100;
-	const totalPercentage =
-		item.payments.reduce((acc, payment) => (acc += payment.percentage), 0) /
-		100;
-	const remainder = totalPrice - totalPercentage * totalPrice;
-
 	return (
 		<View style={{ marginVertical: 5, marginHorizontal: 20 }}>
 			<Card
@@ -53,7 +36,7 @@ export default function ItemDisplay({
 						backgroundColor: DefaultTheme.colors.backdrop
 					}}
 				>
-					{item.quantity}
+					{computedItem.getItem().quantity}
 				</Badge>
 				<View
 					style={{
@@ -62,27 +45,16 @@ export default function ItemDisplay({
 					}}
 				>
 					<Text style={{ fontSize: 24, flexShrink: 1 }}>
-						{item.name}
+						{computedItem.getItem().name}
 					</Text>
-					<View style={{ flexDirection: "row", alignSelf: "center" }}>
-						<Text
-							style={
-								remainder !== totalPrice
-									? priceStyleWithRemainder
-									: normalPriceStyle
-							}
-						>
-							£{totalPrice}
-						</Text>
-						{remainder !== totalPrice && (
-							<Text style={{ fontSize: 24, marginLeft: 10 }}>
-								£{remainder}
-							</Text>
-						)}
-					</View>
+					<RemainderDisplay
+						total={computedItem.getPrice() / 100}
+						remainder={computedItem.getRemainder()}
+						prepend="£"
+					/>
 				</View>
 			</Card>
-			{item.payments.length > 0 && (
+			{computedItem.getItem().payments.length > 0 && (
 				<View
 					style={{
 						flexDirection: "row",
@@ -91,7 +63,7 @@ export default function ItemDisplay({
 						top: -9
 					}}
 				>
-					{item.payments.map((payment, index) => {
+					{computedItem.getItem().payments.map((payment, index) => {
 						const backgroundColor = people
 							.find(person => person.getName() === payment.person)
 							?.getHexColour();
