@@ -7,7 +7,7 @@ import {
 	launchCamera,
 	launchImageLibrary
 } from "react-native-image-picker";
-import ReadImageModule from "../modules/ReadImageModule";
+import ReadImageModule from "../utils/ReadImageModule";
 
 const styles = StyleSheet.create({
 	container: {
