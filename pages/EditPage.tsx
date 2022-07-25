@@ -65,7 +65,7 @@ const fakeTransaction: Transaction = {
 	items: [fakeItem]
 };
 
-export default function TransactionPage(props: TransactionPageProps) {
+export default function EditPage(props: TransactionPageProps) {
 	const { transactionName } = props.route.params;
 	const navigation = useNavigation<NavigationProp<any>>();
 

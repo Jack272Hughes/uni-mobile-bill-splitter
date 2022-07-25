@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Item, Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createBlankTransaction } from "./TransactionPage";
+import { createBlankTransaction } from "./EditPage";
 import collectPayments from "../utils/CollectPayments";
 import NumberBubble from "../components/NumberBubble";
 import PaymentDisplay from "../components/PaymentDisplay";
@@ -40,7 +40,7 @@ const fakeTransaction: Transaction = {
 	items: [fakeItem]
 };
 
-export default function PaymentPage(props: PaymentPageProps) {
+export default function DisplayPage(props: PaymentPageProps) {
 	const navigation = useNavigation<NavigationProp<any>>();
 	const [transaction, setTransaction] =
 		useState<Transaction>(EMPTY_TRANSACTION);

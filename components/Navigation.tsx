@@ -2,8 +2,8 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "../pages/HomePage";
-import PaymentPage from "../pages/PaymentPage";
-import TransactionPage from "../pages/TransactionPage";
+import DisplayPage from "../pages/DisplayPage";
+import EditPage from "../pages/EditPage";
 
 export enum Screens {
 	HOME = "home",
@@ -28,11 +28,11 @@ export default function Navigation() {
 				}}
 			>
 				<Stack.Screen name={Screens.HOME} component={HomePage} />
-				<Stack.Screen name={Screens.PAYMENT} component={PaymentPage} />
+				<Stack.Screen name={Screens.PAYMENT} component={DisplayPage} />
 				<Stack.Screen
 					name={Screens.TRANSACTION}
 					options={{ animation: "slide_from_bottom" }}
-					component={TransactionPage}
+					component={EditPage}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
