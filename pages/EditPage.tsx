@@ -35,34 +35,16 @@ function itemsMatch(item1: Item, item2: Item): boolean {
 	);
 }
 
+function arraysMatch<A>(array1: A[], array2: A[]): boolean {
+	return (
+		array1.length === array2.length &&
+		array1.every((element, index) => element === array2[index])
+	);
+}
+
 export function createBlankTransaction(): Transaction {
 	return { people: [], items: [] };
 }
-
-const fakeItem: Item = {
-	name: "Coca-cola",
-	quantity: 4,
-	price: 299,
-	payments: [
-		{
-			people: ["Jack Hughes"],
-			quantity: 1
-		},
-		{
-			people: ["Maria Sherbert"],
-			quantity: 1
-		},
-		{
-			people: ["Jack Hughes", "Jayden-Lee West"],
-			quantity: 1
-		}
-	]
-};
-
-const fakeTransaction: Transaction = {
-	people: ["Jayden-Lee West", "Jack Hughes", "Maria Sherbert"],
-	items: [fakeItem]
-};
 
 export default function EditPage(props: TransactionPageProps) {
 	const { transactionName } = props.route.params;
@@ -78,16 +60,29 @@ export default function EditPage(props: TransactionPageProps) {
 
 	useEffect(() => {
 		AsyncStorage.getItem(transactionName)
-			// .then(result => setTransaction(JSON.parse(result || "{}")))
-			.then(() => setTransaction(fakeTransaction))
+			.then(result => {
+				setTransaction(
+					result ? JSON.parse(result) : createBlankTransaction()
+				);
+			})
 			.catch(console.error);
 	}, [props.route.params]);
+
+	const saveTransaction = (): void => {
+		AsyncStorage.setItem(transactionName, JSON.stringify(transaction))
+			.then(() => {
+				navigation.navigate(Screens.PAYMENT, {
+					transactionName
+				});
+			})
+			.catch(err => console.error(err));
+	};
 
 	const people: ColourCodedPerson[] = transaction.people.map(
 		person => new ColourCodedPerson(person)
 	);
 
-	const items: ComputedItem[] = transaction.items.map(
+	const computedItems: ComputedItem[] = transaction.items.map(
 		item => new ComputedItem(item)
 	);
 
@@ -171,6 +166,61 @@ export default function EditPage(props: TransactionPageProps) {
 		closeModal();
 	};
 
+	const addPayment = (itemIndex: number) => {
+		if (!computedItems[itemIndex].hasAvailableQuantity()) return;
+
+		const newItems = transaction.items.slice();
+
+		const sortedSelectedPeople = Array.from(selectedPeople.values()).sort();
+		const newPayments = newItems[itemIndex].payments.slice();
+		const existingPaymentIndex = newPayments.findIndex(payment =>
+			arraysMatch(payment.people.sort(), sortedSelectedPeople)
+		);
+
+		if (existingPaymentIndex > -1) {
+			const existingPayment = newPayments[existingPaymentIndex];
+			newPayments[existingPaymentIndex] = {
+				...existingPayment,
+				quantity: existingPayment.quantity + 1
+			};
+		} else {
+			newPayments.push({ people: sortedSelectedPeople, quantity: 1 });
+		}
+
+		newItems[itemIndex] = { ...newItems[itemIndex], payments: newPayments };
+		setTransaction({
+			...transaction,
+			items: newItems
+		});
+	};
+
+	const removePayment = (itemIndex: number) => {
+		const newItems = transaction.items.slice();
+		const sortedSelectedPeople = Array.from(selectedPeople.values()).sort();
+		const newPayments = newItems[itemIndex].payments.slice();
+		const existingPaymentIndex = newPayments.findIndex(payment =>
+			arraysMatch(payment.people.sort(), sortedSelectedPeople)
+		);
+
+		if (existingPaymentIndex < 0) return;
+
+		const existingPayment = newPayments[existingPaymentIndex];
+		if (existingPayment.quantity <= 1) {
+			newPayments.splice(existingPaymentIndex, 1);
+		} else {
+			newPayments[existingPaymentIndex] = {
+				...existingPayment,
+				quantity: existingPayment.quantity - 1
+			};
+		}
+
+		newItems[itemIndex] = { ...newItems[itemIndex], payments: newPayments };
+		setTransaction({
+			...transaction,
+			items: newItems
+		});
+	};
+
 	const createModal = () => {
 		switch (currentModal.type) {
 			case ModalType.PAYEE:
@@ -215,11 +265,7 @@ export default function EditPage(props: TransactionPageProps) {
 				<IconButton
 					size={32}
 					icon="check"
-					onPress={() =>
-						navigation.navigate(Screens.PAYMENT, {
-							transactionName
-						})
-					}
+					onPress={() => saveTransaction()}
 				/>
 			</View>
 			<Text
@@ -299,15 +345,22 @@ export default function EditPage(props: TransactionPageProps) {
 			>
 				Add Item
 			</Button>
-			{items.map((computedItem, index) => {
+			{computedItems.map((computedItem, index) => {
 				return (
 					<ItemDisplay
 						key={index}
 						onPress={() =>
-							setCurrentModal({
-								type: ModalType.ITEM,
-								dataName: computedItem.getItem().name
-							})
+							selectedPeople.size < 1
+								? setCurrentModal({
+										type: ModalType.ITEM,
+										dataName: computedItem.getItem().name
+								  })
+								: addPayment(index)
+						}
+						onLongPress={
+							selectedPeople.size > 0
+								? () => removePayment(index)
+								: undefined
 						}
 						people={people}
 						computedItem={computedItem}

@@ -57,7 +57,7 @@ export default function ItemDisplay({
 						{computedItem.getItem().name}
 					</Text>
 					<RemainderDisplay
-						total={computedItem.getPrice() / 100}
+						total={computedItem.getTotalPrice() / 100}
 						remainder={computedItem.getRemainder() / 100}
 						prepend="£"
 					/>

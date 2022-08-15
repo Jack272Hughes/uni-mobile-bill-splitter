@@ -48,11 +48,11 @@ export default function RemainderDisplay({
 						: normalPriceStyle
 				}
 			>
-				{prepend + total + append}
+				{prepend + total.toFixed(2) + append}
 			</Text>
 			{remainder !== total && (
 				<Text style={{ fontSize: size, marginLeft: 10 }}>
-					{prepend + remainder + append}
+					{prepend + remainder.toFixed(2) + append}
 				</Text>
 			)}
 		</View>

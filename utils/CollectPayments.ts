@@ -5,6 +5,7 @@ import {
 	Payment,
 	Transaction
 } from "../types";
+import ComputedItem from "./ComputedItem";
 
 function splitPayment(amount: number, people: string[]): Payment[] {
 	const perPerson = Math.floor(amount / people.length);
@@ -52,15 +53,14 @@ export default function collectPayments(
 	};
 
 	transaction.items.forEach(item => {
-		const totalPrice = item.price * item.quantity;
-		collectedPayments.total += totalPrice;
-		collectedPayments.remainder +=
-			item.price * (item.quantity - item.payments.length);
+		const computedItem = new ComputedItem(item);
+		collectedPayments.total += computedItem.getTotalPrice();
+		collectedPayments.remainder += computedItem.getRemainder();
 
 		const itemPayments = calculateItemPayments(item);
 
 		Array.from(itemPayments.entries()).forEach(([person, amount]) => {
-			payments.get(person)?.push({ item: item.name, amount: amount });
+			payments.get(person)!.push({ item: item.name, amount: amount });
 		});
 	});
 

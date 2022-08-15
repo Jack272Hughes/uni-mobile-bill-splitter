@@ -19,31 +19,6 @@ type PaymentPageProps = NativeStackScreenProps<
 
 const EMPTY_TRANSACTION: Transaction = createBlankTransaction();
 
-const fakeItem: Item = {
-	name: "Coca-cola",
-	quantity: 4,
-	price: 299,
-	payments: [
-		{
-			people: ["Jack Hughes"],
-			quantity: 1
-		},
-		{
-			people: ["Maria Sherbert"],
-			quantity: 1
-		},
-		{
-			people: ["Jack Hughes", "Jayden-Lee West"],
-			quantity: 1
-		}
-	]
-};
-
-const fakeTransaction: Transaction = {
-	people: ["Jayden-Lee West", "Jack Hughes", "Maria Sherbert"],
-	items: [fakeItem]
-};
-
 export default function DisplayPage(props: PaymentPageProps) {
 	const navigation = useNavigation<NavigationProp<any>>();
 	const [transaction, setTransaction] =
@@ -54,7 +29,9 @@ export default function DisplayPage(props: PaymentPageProps) {
 	useEffect(() => {
 		AsyncStorage.getItem(transactionName)
 			// .then(result => setTransaction(JSON.parse(result || "{}")))
-			.then(() => setTransaction(fakeTransaction))
+			.then(result =>
+				setTransaction(result ? JSON.parse(result) : EMPTY_TRANSACTION)
+			)
 			.catch(console.error);
 	}, [props.route.params]);
 
