@@ -40,3 +40,8 @@ export type CollectedPayments = {
 	remainder: number;
 	payments: Map<string, ItemPayment[]>;
 };
+
+export type ModalInfo = {
+	type: ModalType;
+	dataName?: string;
+};

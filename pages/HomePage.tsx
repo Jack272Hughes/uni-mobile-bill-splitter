@@ -11,33 +11,72 @@ import {
 	Title
 } from "react-native-paper";
 import { Screens } from "../components/Navigation";
-import { TransactionInfo } from "../types";
+import { ModalInfo, TransactionInfo } from "../types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ModalType, TransactionModal } from "../components/modals";
+
+const NO_MODAL = { type: ModalType.NONE };
+
+const HOME_STORAGE_KEY = "HOME";
 
 export default function HomePage() {
 	const [transactions, setTransactions] = useState<TransactionInfo[]>([]);
+	const [modal, setModal] = useState<ModalInfo>(NO_MODAL);
 	const navigation = useNavigation<NavigationProp<any>>();
 
 	useEffect(() => {
-		AsyncStorage.getItem("transactions")
-			// .then(result => setTransactions(JSON.parse(result || "[]")))
-			.then(() =>
-				setTransactions([
-					{
-						name: "Holiday to United States of America",
-						date: "27/05/2021"
-					}
-				])
-			)
+		AsyncStorage.getItem(`${HOME_STORAGE_KEY}-transactions`)
+			.then(result => setTransactions(result ? JSON.parse(result) : []))
 			.catch(console.error);
 	}, []);
 
+	const addTransaction = (transaction: TransactionInfo) => {
+		const newTransactions = transactions.slice();
+		if (modal.dataName) {
+			const existingTransaction = newTransactions.findIndex(
+				transaction => transaction.name === modal.dataName
+			);
+			newTransactions[existingTransaction] = transaction;
+		} else {
+			newTransactions.push(transaction);
+		}
+		AsyncStorage.setItem(
+			`${HOME_STORAGE_KEY}-transactions`,
+			JSON.stringify(newTransactions)
+		)
+			.then(() => {
+				setTransactions(newTransactions);
+			})
+			.catch(err => console.error(err))
+			.finally(() => setModal(NO_MODAL));
+	};
+
 	return (
 		<SafeAreaView style={{ padding: 25, marginBottom: 75 }}>
+			{modal.type === ModalType.TRANSACTION && (
+				<TransactionModal
+					transaction={
+						modal.dataName
+							? transactions.find(
+									transaction =>
+										transaction.name === modal.dataName
+							  )
+							: undefined
+					}
+					onSubmit={transactionInfo =>
+						addTransaction(transactionInfo)
+					}
+					onDismiss={() => setModal(NO_MODAL)}
+				/>
+			)}
 			<Text style={{ fontSize: 32, textAlign: "center" }}>
 				Bill Splitter
 			</Text>
-			<Button mode="contained" style={{ margin: 20 }}>
+			<Button
+				mode="contained"
+				style={{ margin: 20 }}
+				onPress={() => setModal({ type: ModalType.TRANSACTION })}
+			>
 				New Transaction
 			</Button>
 			<ScrollView showsVerticalScrollIndicator={false}>
@@ -49,6 +88,12 @@ export default function HomePage() {
 							onPress={() => {
 								navigation.navigate(Screens.PAYMENT, {
 									transactionName: transaction.name
+								});
+							}}
+							onLongPress={() => {
+								setModal({
+									type: ModalType.TRANSACTION,
+									dataName: transaction.name
 								});
 							}}
 						>

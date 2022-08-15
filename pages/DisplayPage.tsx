@@ -5,7 +5,7 @@ import { RootStackParamList, Screens } from "../components/Navigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Item, Transaction } from "../types";
+import { Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBlankTransaction } from "./EditPage";
 import collectPayments from "../utils/CollectPayments";
@@ -19,6 +19,8 @@ type PaymentPageProps = NativeStackScreenProps<
 
 const EMPTY_TRANSACTION: Transaction = createBlankTransaction();
 
+export const TRANSACTION_STORAGE_KEY = "TRANSACTION";
+
 export default function DisplayPage(props: PaymentPageProps) {
 	const navigation = useNavigation<NavigationProp<any>>();
 	const [transaction, setTransaction] =
@@ -27,8 +29,7 @@ export default function DisplayPage(props: PaymentPageProps) {
 	const { transactionName } = props.route.params;
 
 	useEffect(() => {
-		AsyncStorage.getItem(transactionName)
-			// .then(result => setTransaction(JSON.parse(result || "{}")))
+		AsyncStorage.getItem(`${TRANSACTION_STORAGE_KEY}-${transactionName}`)
 			.then(result =>
 				setTransaction(result ? JSON.parse(result) : EMPTY_TRANSACTION)
 			)
@@ -79,10 +80,10 @@ export default function DisplayPage(props: PaymentPageProps) {
 				}}
 			>
 				<NumberBubble prepend="£" header="Bill Total">
-					{collectedPayments.total / 100}
+					{(collectedPayments.total / 100).toFixed(2)}
 				</NumberBubble>
 				<NumberBubble prepend="£" header="Unpaid">
-					{collectedPayments.remainder / 100}
+					{(collectedPayments.remainder / 100).toFixed(2)}
 				</NumberBubble>
 			</View>
 			<PaymentDisplay collectedPayments={collectedPayments} />

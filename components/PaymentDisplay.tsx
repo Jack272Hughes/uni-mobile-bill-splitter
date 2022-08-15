@@ -64,7 +64,7 @@ export default function PaymentDisplay(props: DisplayProps) {
 									<DataTable.Cell
 										textStyle={{ fontSize: 16 }}
 									>
-										£{totalPayment / 100}
+										£{(totalPayment / 100).toFixed(2)}
 									</DataTable.Cell>
 								</DataTable.Row>
 
@@ -94,8 +94,10 @@ export default function PaymentDisplay(props: DisplayProps) {
 															}}
 														>
 															£
-															{itemPayment.amount /
-																100}
+															{(
+																itemPayment.amount /
+																100
+															).toFixed(2)}
 														</DataTable.Cell>
 													</DataTable.Row>
 												);

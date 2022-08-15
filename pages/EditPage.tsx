@@ -6,7 +6,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Item, Transaction } from "../types";
+import { Item, ModalInfo, Transaction } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColourCodedPerson } from "../utils/ColourCodedPerson";
 import PersonIcon from "../components/PersonIcon";
@@ -14,16 +14,12 @@ import { ItemModal, ModalType, PayeeModal } from "../components/modals";
 import ItemDisplay from "../components/ItemDisplay";
 import { ItemModalData } from "../components/modals/ItemModal";
 import ComputedItem from "../utils/ComputedItem";
+import { TRANSACTION_STORAGE_KEY } from "./DisplayPage";
 
 type TransactionPageProps = NativeStackScreenProps<
 	RootStackParamList,
 	Screens.TRANSACTION
 >;
-
-type ModalInfo = {
-	type: ModalType;
-	dataName?: string;
-};
 
 const NO_MODAL = { type: ModalType.NONE };
 
@@ -59,7 +55,7 @@ export default function EditPage(props: TransactionPageProps) {
 	const closeModal = () => setCurrentModal(NO_MODAL);
 
 	useEffect(() => {
-		AsyncStorage.getItem(transactionName)
+		AsyncStorage.getItem(`${TRANSACTION_STORAGE_KEY}-${transactionName}`)
 			.then(result => {
 				setTransaction(
 					result ? JSON.parse(result) : createBlankTransaction()
@@ -69,7 +65,10 @@ export default function EditPage(props: TransactionPageProps) {
 	}, [props.route.params]);
 
 	const saveTransaction = (): void => {
-		AsyncStorage.setItem(transactionName, JSON.stringify(transaction))
+		AsyncStorage.setItem(
+			`${TRANSACTION_STORAGE_KEY}-${transactionName}`,
+			JSON.stringify(transaction)
+		)
 			.then(() => {
 				navigation.navigate(Screens.PAYMENT, {
 					transactionName
