@@ -3,6 +3,12 @@ export type TransactionInfo = {
 	date: string;
 };
 
+export type TransactionDefinition = {
+	name: string;
+	date: string;
+	imageUri?: string;
+};
+
 export type Payment = {
 	person: string;
 	amount: number;

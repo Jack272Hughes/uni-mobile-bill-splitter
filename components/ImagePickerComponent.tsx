@@ -60,7 +60,7 @@ export default function ImagePickerComponent() {
 
 	const selectFile = () => {
 		launchImageLibrary(imageLibraryOptions).then(response => {
-			if (response.assets) {
+			if (response.assets && response.assets.length > 0) {
 				setResourcePath(response.assets[0]);
 				processImage(response.assets[0].uri!);
 			}
@@ -69,7 +69,7 @@ export default function ImagePickerComponent() {
 
 	const takePhoto = () => {
 		launchCamera(cameraOptions).then(response => {
-			if (response.assets) {
+			if (response.assets && response.assets.length > 0) {
 				setResourcePath(response.assets[0]);
 				processImage(response.assets[0].uri!);
 			}

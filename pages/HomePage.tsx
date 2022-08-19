@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import {
 	Button,
 	Card,
 	Divider,
+	IconButton,
 	Paragraph,
 	Text,
 	Title
 } from "react-native-paper";
 import { Screens } from "../components/Navigation";
-import { ModalInfo, TransactionInfo } from "../types";
+import {
+	ModalInfo,
+	Transaction,
+	TransactionDefinition,
+	TransactionInfo
+} from "../types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ModalType, TransactionModal } from "../components/modals";
+import processImage from "../utils/ImageParser";
+import { TRANSACTION_STORAGE_KEY } from "./DisplayPage";
 
 const NO_MODAL = { type: ModalType.NONE };
 
@@ -30,7 +38,7 @@ export default function HomePage() {
 			.catch(console.error);
 	}, []);
 
-	const addTransaction = (transaction: TransactionInfo) => {
+	const addTransaction = (transaction: TransactionDefinition) => {
 		const newTransactions = transactions.slice();
 		if (modal.dataName) {
 			const existingTransaction = newTransactions.findIndex(
@@ -40,15 +48,39 @@ export default function HomePage() {
 		} else {
 			newTransactions.push(transaction);
 		}
+
 		AsyncStorage.setItem(
 			`${HOME_STORAGE_KEY}-transactions`,
 			JSON.stringify(newTransactions)
 		)
-			.then(() => {
+			.then(async () => {
+				if (transaction.imageUri) {
+					await processImage(transaction.imageUri)
+						.then(async items => {
+							await AsyncStorage.setItem(
+								`${TRANSACTION_STORAGE_KEY}-${transaction.name}`,
+								JSON.stringify({ people: [], items })
+							);
+						})
+						.catch(err => console.error(err));
+				}
 				setTransactions(newTransactions);
 			})
 			.catch(err => console.error(err))
 			.finally(() => setModal(NO_MODAL));
+	};
+
+	const removeTransaction = (transaction: TransactionInfo) => {
+		const newTransactions = transactions.slice();
+		const index = newTransactions.findIndex(t => t === transaction);
+
+		if (index > -1) {
+			newTransactions.splice(index, 1);
+			AsyncStorage.removeItem(
+				`${TRANSACTION_STORAGE_KEY}-${transaction.name}`
+			);
+			setTransactions(newTransactions);
+		}
 	};
 
 	return (
@@ -63,8 +95,8 @@ export default function HomePage() {
 							  )
 							: undefined
 					}
-					onSubmit={transactionInfo =>
-						addTransaction(transactionInfo)
+					onSubmit={transactionDefinition =>
+						addTransaction(transactionDefinition)
 					}
 					onDismiss={() => setModal(NO_MODAL)}
 				/>
@@ -97,7 +129,16 @@ export default function HomePage() {
 								});
 							}}
 						>
-							<Card.Content>
+							<IconButton
+								icon="close"
+								style={{
+									position: "absolute",
+									right: 0,
+									zIndex: 1
+								}}
+								onPress={() => removeTransaction(transaction)}
+							/>
+							<Card.Content style={{ padding: 16 }}>
 								<Paragraph>{transaction.date}</Paragraph>
 								<Divider />
 								<Title>{transaction.name}</Title>
