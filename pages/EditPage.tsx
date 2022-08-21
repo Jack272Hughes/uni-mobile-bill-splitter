@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Button, Divider, IconButton, Surface } from "react-native-paper";
 import { RootStackParamList, Screens } from "../components/Navigation";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
@@ -344,28 +344,31 @@ export default function EditPage(props: TransactionPageProps) {
 			>
 				Add Item
 			</Button>
-			{computedItems.map((computedItem, index) => {
-				return (
-					<ItemDisplay
-						key={index}
-						onPress={() =>
-							selectedPeople.size < 1
-								? setCurrentModal({
-										type: ModalType.ITEM,
-										dataName: computedItem.getItem().name
-								  })
-								: addPayment(index)
-						}
-						onLongPress={
-							selectedPeople.size > 0
-								? () => removePayment(index)
-								: undefined
-						}
-						people={people}
-						computedItem={computedItem}
-					/>
-				);
-			})}
+			<ScrollView style={{ marginBottom: 270 }}>
+				{computedItems.map((computedItem, index) => {
+					return (
+						<ItemDisplay
+							key={index}
+							onPress={() =>
+								selectedPeople.size < 1
+									? setCurrentModal({
+											type: ModalType.ITEM,
+											dataName:
+												computedItem.getItem().name
+									  })
+									: addPayment(index)
+							}
+							onLongPress={
+								selectedPeople.size > 0
+									? () => removePayment(index)
+									: undefined
+							}
+							people={people}
+							computedItem={computedItem}
+						/>
+					);
+				})}
+			</ScrollView>
 		</SafeAreaView>
 	);
 }

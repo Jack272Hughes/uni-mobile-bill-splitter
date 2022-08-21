@@ -34,6 +34,8 @@ export default function HomePage() {
 	}, []);
 
 	const addTransaction = (transaction: TransactionDefinition) => {
+		if (transactions.find(t => t.name === transaction.name)) return;
+
 		const newTransactions = transactions.slice();
 		if (modal.dataName) {
 			const existingTransaction = newTransactions.findIndex(
@@ -74,7 +76,12 @@ export default function HomePage() {
 			AsyncStorage.removeItem(
 				`${TRANSACTION_STORAGE_KEY}-${transaction.name}`
 			);
+			AsyncStorage.setItem(
+				`${HOME_STORAGE_KEY}-transactions`,
+				JSON.stringify(newTransactions)
+			);
 			setTransactions(newTransactions);
+			setModal(NO_MODAL);
 		}
 	};
 
