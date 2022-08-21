@@ -112,6 +112,7 @@ export default function TransactionModal(props: TransactionModalProps) {
 					label="Transaction Name"
 					value={name}
 					onChangeText={setName}
+					returnKeyType="done"
 				/>
 				<Button
 					style={{

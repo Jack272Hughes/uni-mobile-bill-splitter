@@ -81,6 +81,7 @@ export default function ItemModal(props: ModalProps) {
 						label="Item Name"
 						value={name}
 						onChangeText={setName}
+						returnKeyType="done"
 					/>
 					{shouldShowWarnings && name === "" && (
 						<HelperText type="error">
@@ -97,6 +98,7 @@ export default function ItemModal(props: ModalProps) {
 						value={quantity}
 						onChangeText={setQuantity}
 						left={<TextInput.Affix text="#" />}
+						returnKeyType="done"
 					/>
 					{shouldShowWarnings && !isValidQuantity && (
 						<HelperText type="error">
@@ -115,6 +117,7 @@ export default function ItemModal(props: ModalProps) {
 						value={price}
 						onChangeText={setPrice}
 						left={<TextInput.Affix text="£" />}
+						returnKeyType="done"
 					/>
 					{shouldShowWarnings && !isValidPrice && (
 						<HelperText type="error">

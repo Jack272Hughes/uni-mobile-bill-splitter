@@ -58,6 +58,7 @@ export default function PayeeModal(props: ModalProps) {
 					value={name}
 					onChangeText={setName}
 					style={{ margin: 20 }}
+					returnKeyType="done"
 				/>
 				<Button
 					mode="contained"

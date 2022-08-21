@@ -12,12 +12,7 @@ import {
 	Title
 } from "react-native-paper";
 import { Screens } from "../components/Navigation";
-import {
-	ModalInfo,
-	Transaction,
-	TransactionDefinition,
-	TransactionInfo
-} from "../types";
+import { ModalInfo, TransactionDefinition, TransactionInfo } from "../types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ModalType, TransactionModal } from "../components/modals";
 import processImage from "../utils/ImageParser";
